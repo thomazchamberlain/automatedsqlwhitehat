@@ -1,0 +1,2 @@
+sqlmap.directory=/Users/thomazc/sqlmap
+sqlmap.output.directory=/Users/thomazc/.sqlmap/output

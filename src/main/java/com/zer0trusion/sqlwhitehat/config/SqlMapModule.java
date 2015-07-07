@@ -9,7 +9,7 @@ import com.zer0trusion.sqlwhitehat.detection.FindVulnTargets;
 public class SqlMapModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(FindVulnTargets.class).asEagerSingleton();
+        bind(FindVulnTargets.class);
     }
 
 }

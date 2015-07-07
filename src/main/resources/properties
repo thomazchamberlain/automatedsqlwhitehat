@@ -1,2 +1,3 @@
 sqlmap.directory=/Users/thomazc/sqlmap
 sqlmap.output.directory=/Users/thomazc/.sqlmap/output
+sqlmap.googledork=inurl:.php?id=1

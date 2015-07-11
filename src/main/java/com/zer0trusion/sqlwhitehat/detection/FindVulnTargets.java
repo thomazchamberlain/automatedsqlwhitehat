@@ -5,12 +5,13 @@ import com.google.inject.name.Named;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
  * Created by thomazc on 7/6/15.
  */
-public class FindVulnTargets {
+public class FindVulnTargets implements Runnable {
     @Inject
     @Named("sqlmap.directory")
     private String sqlmapDirectory;
@@ -23,17 +24,27 @@ public class FindVulnTargets {
     @Named("sqlmap.googledork")
     private String googleDork;
 
-    public void start() throws Exception {
-        String command = "python sqlmap.py -g \"" + googleDork + "\" --batch --time-sec=15";
-        ProcessBuilder builder = new ProcessBuilder(command.split(" "));
+    private final String sqlMapCmd = "python sqlmap.py -g \"" + googleDork + "\" --batch --time-sec=15";
+
+    public void run() {
+        ProcessBuilder builder = new ProcessBuilder(sqlMapCmd.split(" "));
         builder.directory(new File(sqlmapDirectory));
-        Process p = builder.start();
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String line = null;
-
-        while((line=br.readLine())!=null){
-            System.out.println(line);
+        Process p = null;
+        try {
+            p = builder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+//        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//        String line = null;
+//
+//        try {
+//            while((line=br.readLine())!=null){
+//                System.out.println(line);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }

@@ -2,11 +2,10 @@ package com.zer0trusion.sqlwhitehat.detection;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import org.apache.log4j.Logger;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 /**
  * Created by thomazc on 7/6/15.
@@ -17,16 +16,13 @@ public class FindVulnTargets implements Runnable {
     private String sqlmapDirectory;
 
     @Inject
-    @Named("sqlmap.output.directory")
-    private String sqlmapOutDirectory;
-
-    @Inject
     @Named("sqlmap.googledork")
     private String googleDork;
 
-    private final String sqlMapCmd = "python sqlmap.py -g \"" + googleDork + "\" --batch --time-sec=15";
+    private Logger log = Logger.getLogger(FindVulnTargets.class);
 
     public void run() {
+        String sqlMapCmd = "python sqlmap.py -g \"" + googleDork + "\" --random-agent --batch --time-sec=15";
         ProcessBuilder builder = new ProcessBuilder(sqlMapCmd.split(" "));
         builder.directory(new File(sqlmapDirectory));
         Process p = null;
@@ -36,15 +32,5 @@ public class FindVulnTargets implements Runnable {
             e.printStackTrace();
         }
 
-//        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//        String line = null;
-//
-//        try {
-//            while((line=br.readLine())!=null){
-//                System.out.println(line);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 }

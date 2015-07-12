@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 
@@ -20,6 +21,11 @@ public class ResultParser implements Runnable {
 
     public void run() {
         Path outputFolder = Paths.get(outputDirectory);
+
+        if(!outputFolder.toFile().exists()) {
+            outputFolder.toFile().mkdirs();
+        }
+
         WatchService watchService = null;
 
         try {
@@ -29,6 +35,7 @@ public class ResultParser implements Runnable {
             log.error(e.getMessage(), e);
         }
 
+        String lastDirectory = null;
 
         while (true) {
             WatchKey key;
@@ -43,7 +50,21 @@ public class ResultParser implements Runnable {
                 WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 Path fileName = ev.context();
                 if(!fileName.toString().endsWith(".csv")) {
-                    log.info("Attempted to find vulnerability on " + fileName);
+                    String currentDirectory = outputDirectory + File.separator + fileName;
+                    if(lastDirectory == null) {
+                        lastDirectory = outputDirectory + File.separator + fileName;
+                    }
+
+                    if(!lastDirectory.equals(currentDirectory)) {
+                        File targetLog = new File(lastDirectory + File.separator + "log");
+                        if(targetLog.length() > 0) {
+                            log.info(lastDirectory.substring(lastDirectory.lastIndexOf("/") + 1)
+                                    + " is vulnerable to SQL Injections.");
+                        }
+                    }
+
+                    lastDirectory = currentDirectory;
+
                 }
 
             }
